@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, File, Camera, Type, ArrowDown } from 'lucide-react';
+import { File, Camera, Type, ArrowDown } from 'lucide-react';
 import { ScrollToTop } from '@/components/scroll-to-top';
 
 export default function LandingPage() {
@@ -22,12 +22,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/transfer">
-                  Start Sharing Now <ArrowRight className="ml-2" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="#features">Learn More</Link>
+                <Link href="#features">Start Sharing Now</Link>
               </Button>
             </div>
           </div>

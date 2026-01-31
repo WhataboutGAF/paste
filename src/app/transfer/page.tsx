@@ -11,12 +11,11 @@ import { useHistory } from '@/hooks/use-history';
 const initialSendState: SendState = {
   code: null,
   error: null,
+  text: null,
 };
 
 export default function TransferPage() {
   const [sendText, setSendText] = useState('');
-  // State for the text that has a generated code
-  const [sentText, setSentText] = useState<string | null>(null);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
   const [state, formAction] = useActionState(generateCodeAction, initialSendState);
@@ -34,28 +33,17 @@ export default function TransferPage() {
       setShowCode(false);
       setGeneratedCode(null);
     }
-    if (state?.code) {
+    if (state?.code && state.text) {
       setGeneratedCode(state.code);
-      setSentText(sendText);
       setShowCode(true);
-      if (sendText) {
-        addHistoryItem({ text: sendText, code: state.code });
-      }
+      addHistoryItem({ text: state.text, code: state.code });
     }
-  }, [state, toast, addHistoryItem, sendText]);
-
-  useEffect(() => {
-    // If the text has changed from what was sent, hide the code.
-    if (sentText !== null && sendText !== sentText) {
-      setShowCode(false);
-      setSentText(null);
-      setGeneratedCode(null);
-    }
-  }, [sendText, sentText]);
+  }, [state, toast, addHistoryItem]);
 
   const handleReset = () => {
     setShowCode(false);
     setGeneratedCode(null);
+    setSendText('');
   };
 
   return (

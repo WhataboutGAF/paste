@@ -6,6 +6,7 @@ import { storeText, retrieveText } from '@/lib/storage';
 export type SendState = {
   code?: string | null;
   error?: string | null;
+  text?: string | null;
 };
 
 const sendSchema = z.object({
@@ -25,7 +26,7 @@ export async function generateCodeAction(prevState: SendState, formData: FormDat
 
   try {
     const code = storeText(validatedFields.data.text);
-    return { code };
+    return { code, text: validatedFields.data.text };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };

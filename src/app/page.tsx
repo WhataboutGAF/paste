@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, File, Camera, Type, ChevronDown } from 'lucide-react';
+import { ArrowRight, File, Camera, Type, ArrowDown } from 'lucide-react';
 
 export default function LandingPage() {
   return (
@@ -31,7 +31,7 @@ export default function LandingPage() {
           </div>
           <div className="absolute bottom-10">
             <Link href="#features" aria-label="Scroll to features">
-              <ChevronDown className="h-8 w-8 animate-bounce text-muted-foreground transition-colors hover:text-foreground" />
+              <ArrowDown className="h-6 w-6 animate-slow-bounce text-muted-foreground opacity-75 transition-all hover:text-foreground hover:opacity-100" />
             </Link>
           </div>
         </div>

@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, File, Camera, Type } from 'lucide-react';
+import { ArrowRight, File, Camera, Type, ChevronDown } from 'lucide-react';
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="relative w-full bg-background text-foreground">
-        <div className="container relative z-10 mx-auto flex min-h-[60vh] flex-col items-center justify-center gap-8 px-4 py-16 text-center md:py-24">
+        <div className="container relative z-10 mx-auto flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-16 text-center md:py-24">
           <div>
             <h1 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
               Seamless Sharing,
@@ -28,6 +28,11 @@ export default function LandingPage() {
                 <Link href="#features">Learn More</Link>
               </Button>
             </div>
+          </div>
+          <div className="absolute bottom-10">
+            <Link href="#features" aria-label="Scroll to features">
+              <ChevronDown className="h-8 w-8 animate-bounce text-muted-foreground transition-colors hover:text-foreground" />
+            </Link>
           </div>
         </div>
       </section>

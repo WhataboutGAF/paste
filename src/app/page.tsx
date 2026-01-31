@@ -9,20 +9,20 @@ export default function LandingPage() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'landing-hero');
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="relative w-full bg-background text-foreground">
-        <div className="container relative z-10 mx-auto grid min-h-[70vh] items-center px-4 py-16 text-center lg:grid-cols-2 lg:text-left">
-          <div>
+        <div className="container relative z-10 mx-auto grid min-h-[80vh] items-center gap-8 px-4 py-16 md:grid-cols-2 md:py-24">
+          <div className="text-center md:text-left">
             <h1 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
               Seamless Sharing,
               <br />
-              <span className="text-accent">Instantly.</span>
+              <span className="text-primary">Instantly.</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground md:text-xl">
               QuickPaste is your go-to solution for fast and secure text and file sharing across devices. No sign-ups, no hassle.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row md:justify-start">
               <Button asChild size="lg">
                 <Link href="/transfer">
                   Start Sharing Now <ArrowRight className="ml-2" />
@@ -33,14 +33,13 @@ export default function LandingPage() {
               </Button>
             </div>
           </div>
-          <div className="hidden lg:block">
+          <div className="relative hidden h-64 md:block md:h-full">
             {heroImage && (
               <Image
                 src={heroImage.imageUrl}
                 alt={heroImage.description}
-                width={1200}
-                height={800}
-                className="rounded-lg shadow-2xl"
+                fill
+                className="rounded-lg object-cover shadow-2xl"
                 data-ai-hint={heroImage.imageHint}
                 priority
               />
@@ -50,17 +49,17 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="w-full bg-secondary py-20 sm:py-32">
+      <section id="features" className="w-full bg-secondary py-20 sm:py-24">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="font-headline text-4xl font-bold">Features</h2>
-            <p className="mt-4 text-lg text-muted-foreground">Everything you need for quick device-to-device transfers.</p>
+          <div className="mb-16 text-center">
+            <h2 className="font-headline text-4xl font-bold">A Better Way to Share</h2>
+            <p className="mt-4 text-lg text-muted-foreground">Everything you need for quick device-to-device transfers, and more.</p>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-4">
-                <div className="rounded-md bg-primary p-3">
-                  <Type className="h-6 w-6 text-primary-foreground" />
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            <Card className="border-0 bg-transparent text-center shadow-none">
+              <CardHeader className="flex items-center justify-center">
+                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Type className="h-10 w-10" />
                 </div>
                 <CardTitle>Text Transfer</CardTitle>
               </CardHeader>
@@ -70,29 +69,29 @@ export default function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-accent ring-2 ring-accent">
-              <CardHeader className="flex flex-row items-center gap-4">
-                 <div className="rounded-md bg-primary p-3">
-                  <Camera className="h-6 w-6 text-primary-foreground" />
+            <Card className="border-0 bg-transparent text-center shadow-none">
+              <CardHeader className="flex items-center justify-center">
+                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Camera className="h-10 w-10" />
                 </div>
                 <CardTitle>Photo Sharing</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  <span className="font-semibold text-accent">Coming Soon!</span> Seamlessly transfer photos from your phone to your computer or vice-versa.
+                  <span className="font-semibold text-primary">Coming Soon!</span> Seamlessly transfer photos from your phone to your computer or vice-versa.
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-4">
-                 <div className="rounded-md bg-primary p-3">
-                  <File className="h-6 w-6 text-primary-foreground" />
+            <Card className="border-0 bg-transparent text-center shadow-none">
+              <CardHeader className="flex items-center justify-center">
+                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <File className="h-10 w-10" />
                 </div>
                 <CardTitle>File Sharing</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                <span className="font-semibold text-accent">Coming Soon!</span> Quickly share documents and other files without needing to email them to yourself.
+                  <span className="font-semibold text-primary">Coming Soon!</span> Quickly share documents and other files without needing to email them to yourself.
                 </p>
               </CardContent>
             </Card>
@@ -100,12 +99,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-       {/* Footer */}
+      {/* Footer */}
       <footer className="w-full bg-background py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
+        <div className="container mx-auto border-t px-4 py-8 text-center text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} QuickPaste. All rights reserved.</p>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

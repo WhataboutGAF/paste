@@ -42,7 +42,7 @@ export function HistoryDisplay() {
                   <AccordionTrigger>
                     <div className="flex w-full items-center justify-between gap-4 pr-4">
                       <div className="flex min-w-0 items-center gap-2">
-                        <span className="font-code text-lg text-accent">{item.code}</span>
+                        <span className="font-code text-lg text-primary">{item.code}</span>
                         <span className="min-w-0 flex-1 truncate text-left text-sm text-muted-foreground">
                           {item.text.replace(/\n/g, ' ')}
                         </span>
@@ -57,7 +57,7 @@ export function HistoryDisplay() {
                       <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">Code:</p>
                         <div className="flex items-center space-x-2">
-                          <p className="font-code text-4xl font-semibold tracking-widest text-accent">{item.code}</p>
+                          <p className="font-code text-4xl font-semibold tracking-widest text-primary">{item.code}</p>
                           <CopyButton textToCopy={item.code} />
                         </div>
                       </div>

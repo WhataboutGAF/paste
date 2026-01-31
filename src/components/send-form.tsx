@@ -61,7 +61,7 @@ export function SendForm({ text, onTextChange, formAction, code, showCode, onRes
           <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed p-8 text-center">
             <p className="text-sm text-muted-foreground">Your unique code is:</p>
             <div className="flex items-center space-x-2">
-              <p className="font-code text-4xl font-semibold tracking-widest text-accent">{code}</p>
+              <p className="font-code text-4xl font-semibold tracking-widest text-primary">{code}</p>
               <CopyButton textToCopy={code} />
             </div>
             <p className="text-xs text-muted-foreground">Expires in 5 minutes. Use once.</p>

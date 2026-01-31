@@ -17,6 +17,7 @@ export default function Home() {
   const [sendText, setSendText] = useState('');
   // State for the text that has a generated code
   const [sentText, setSentText] = useState<string | null>(null);
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
   const [state, formAction] = useActionState(generateCodeAction, initialSendState);
   const [showCode, setShowCode] = useState(false);
@@ -31,8 +32,10 @@ export default function Home() {
         variant: 'destructive',
       });
       setShowCode(false);
+      setGeneratedCode(null);
     }
     if (state?.code) {
+      setGeneratedCode(state.code);
       setSentText(sendText);
       setShowCode(true);
       if (sendText) {
@@ -46,11 +49,13 @@ export default function Home() {
     if (sentText !== null && sendText !== sentText) {
       setShowCode(false);
       setSentText(null);
+      setGeneratedCode(null);
     }
   }, [sendText, sentText]);
 
   const handleReset = () => {
     setShowCode(false);
+    setGeneratedCode(null);
   };
 
   return (
@@ -71,7 +76,7 @@ export default function Home() {
               text={sendText}
               onTextChange={setSendText}
               formAction={formAction}
-              state={state}
+              code={generatedCode}
               showCode={showCode}
               onReset={handleReset}
             />

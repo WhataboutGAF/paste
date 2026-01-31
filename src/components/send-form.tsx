@@ -3,7 +3,6 @@
 import { useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
-import { type SendState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -33,12 +32,12 @@ interface SendFormProps {
   text: string;
   onTextChange: (text: string) => void;
   formAction: (payload: FormData) => void;
-  state: SendState;
+  code: string | null;
   showCode: boolean;
   onReset: () => void;
 }
 
-export function SendForm({ text, onTextChange, formAction, state, showCode, onReset }: SendFormProps) {
+export function SendForm({ text, onTextChange, formAction, code, showCode, onReset }: SendFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleReset = () => {
@@ -46,7 +45,7 @@ export function SendForm({ text, onTextChange, formAction, state, showCode, onRe
     formRef.current?.reset();
   };
 
-  if (showCode && state?.code) {
+  if (showCode && code) {
     return (
       <Card className="border-none bg-transparent shadow-none">
         <CardHeader>
@@ -62,8 +61,8 @@ export function SendForm({ text, onTextChange, formAction, state, showCode, onRe
           <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed p-8 text-center">
             <p className="text-sm text-muted-foreground">Your unique code is:</p>
             <div className="flex items-center space-x-2">
-              <p className="font-code text-4xl font-semibold tracking-widest text-accent">{state.code}</p>
-              <CopyButton textToCopy={state.code} />
+              <p className="font-code text-4xl font-semibold tracking-widest text-accent">{code}</p>
+              <CopyButton textToCopy={code} />
             </div>
             <p className="text-xs text-muted-foreground">Expires in 5 minutes. Use once.</p>
           </div>

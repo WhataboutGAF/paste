@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'QuickPaste',
-  description: 'Instantly transfer text between devices with no login and no app install.',
+  title: 'QuickPaste - Seamless Sharing, Instantly',
+  description: 'QuickPaste is your go-to solution for fast and secure text and file sharing across devices. No sign-ups, no hassle.',
 };
 
 export default function RootLayout({

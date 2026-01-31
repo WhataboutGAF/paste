@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState, useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
-import { getTextAction, type ReceiveState } from '@/app/actions';
+import { getTextAction, type ReceiveState } from '@/app/transfer/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

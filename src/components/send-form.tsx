@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useHistory } from '@/hooks/use-history';
 import { CopyButton } from './copy-button';
+import { HistoryButton } from './history-button';
 
 const initialState: SendState = {
   code: null,
@@ -75,8 +76,13 @@ export function SendForm({ text, onTextChange }: SendFormProps) {
     return (
       <Card className="border-none bg-transparent shadow-none">
         <CardHeader>
-          <CardTitle>Code Generated</CardTitle>
-          <CardDescription>Enter this code on your other device to retrieve the text.</CardDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle>Code Generated</CardTitle>
+              <CardDescription>Enter this code on your other device to retrieve the text.</CardDescription>
+            </div>
+            <HistoryButton />
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed p-8 text-center">
@@ -100,8 +106,13 @@ export function SendForm({ text, onTextChange }: SendFormProps) {
   return (
     <Card className="border-none bg-transparent shadow-none">
       <CardHeader>
-        <CardTitle>Send Text</CardTitle>
-        <CardDescription>Paste your text below and generate a unique code to receive it on another device.</CardDescription>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle>Send Text</CardTitle>
+            <CardDescription>Paste your text below and generate a unique code to receive it on another device.</CardDescription>
+          </div>
+          <HistoryButton />
+        </div>
       </CardHeader>
       <CardContent>
         <form ref={formRef} action={formAction} className="space-y-4">

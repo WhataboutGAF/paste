@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SendForm } from '@/components/send-form';
 import { ReceiveForm } from '@/components/receive-form';
-import { HistoryDisplay } from '@/components/history-display';
 
 export default function Home() {
   const [sendText, setSendText] = useState('');
@@ -29,8 +28,6 @@ export default function Home() {
             <ReceiveForm />
           </TabsContent>
         </Tabs>
-        
-        <HistoryDisplay />
       </div>
     </main>
   );

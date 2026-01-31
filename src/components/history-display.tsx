@@ -1,45 +1,42 @@
 'use client';
 
 import { History, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 import { useHistory } from '@/hooks/use-history';
 import { CopyButton } from './copy-button';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { ScrollArea } from './ui/scroll-area';
 
 export function HistoryDisplay() {
   const { history, clearHistory, isLoaded } = useHistory();
 
   if (!isLoaded) {
-    return null;
+    return (
+      <DialogHeader>
+        <DialogTitle>Loading History...</DialogTitle>
+      </DialogHeader>
+    );
   }
 
   return (
-    <div className="mt-8 w-full">
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between gap-4 sm:items-center">
-          <div className="space-y-1.5">
-            <CardTitle className="flex items-center gap-2">
-              <History className="h-6 w-6" />
-              <span>Send History</span>
-            </CardTitle>
-            <CardDescription>
-              {history.length > 0
-                ? `Your last ${history.length} sent item(s). This is stored in your browser.`
-                : 'Your send history will appear here after you send something.'}
-            </CardDescription>
-          </div>
-          {history.length > 0 && (
-            <Button variant="outline" size="sm" onClick={clearHistory} className="shrink-0">
-              <Trash2 className="mr-0 h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Clear History</span>
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {history.length > 0 ? (
-            <Accordion type="single" collapsible className="w-full">
+    <>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2">
+          <History className="h-6 w-6" />
+          <span>Send History</span>
+        </DialogTitle>
+        <DialogDescription>
+          {history.length > 0
+            ? `Your last ${history.length} sent item(s). This is stored in your browser.`
+            : 'Your send history will appear here after you send something.'}
+        </DialogDescription>
+      </DialogHeader>
+      <div className="my-4">
+        {history.length > 0 ? (
+          <ScrollArea className="h-[50vh]">
+            <Accordion type="single" collapsible className="w-full pr-6">
               {history.map((item) => (
                 <AccordionItem value={item.code} key={item.code}>
                   <AccordionTrigger>
@@ -78,13 +75,21 @@ export function HistoryDisplay() {
                 </AccordionItem>
               ))}
             </Accordion>
-          ) : (
-            <div className="flex items-center justify-center rounded-md border-2 border-dashed p-12 text-center">
-              <p className="text-sm text-muted-foreground">You haven't sent any text yet.</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          </ScrollArea>
+        ) : (
+          <div className="flex h-[50vh] items-center justify-center rounded-md border-2 border-dashed p-12 text-center">
+            <p className="text-sm text-muted-foreground">You haven't sent any text yet.</p>
+          </div>
+        )}
+      </div>
+      {history.length > 0 && (
+        <DialogFooter>
+          <Button variant="outline" onClick={clearHistory}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            Clear History
+          </Button>
+        </DialogFooter>
+      )}
+    </>
   );
 }

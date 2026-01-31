@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from './ui/textarea';
 import { CopyButton } from './copy-button';
+import { HistoryButton } from './history-button';
 
 const initialState: ReceiveState = {
   text: null,
@@ -67,8 +68,13 @@ export function ReceiveForm() {
     return (
       <Card className="border-none bg-transparent shadow-none">
         <CardHeader>
-          <CardTitle>Text Received</CardTitle>
-          <CardDescription>Here is the text from the other device. You can copy it now.</CardDescription>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle>Text Received</CardTitle>
+              <CardDescription>Here is the text from the other device. You can copy it now.</CardDescription>
+            </div>
+            <HistoryButton />
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative">
@@ -86,8 +92,13 @@ export function ReceiveForm() {
   return (
     <Card className="border-none bg-transparent shadow-none">
       <CardHeader>
-        <CardTitle>Receive Text</CardTitle>
-        <CardDescription>Enter the code from your other device to instantly receive the text.</CardDescription>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle>Receive Text</CardTitle>
+            <CardDescription>Enter the code from your other device to instantly receive the text.</CardDescription>
+          </div>
+          <HistoryButton />
+        </div>
       </CardHeader>
       <CardContent>
         <form ref={formRef} action={formAction} className="space-y-4">

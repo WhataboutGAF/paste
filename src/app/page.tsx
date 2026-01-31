@@ -1,28 +1,24 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, File, Camera, Type } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function LandingPage() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'landing-hero');
-
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="relative w-full bg-background text-foreground">
-        <div className="container relative z-10 mx-auto grid min-h-[80vh] items-center gap-8 px-4 py-16 md:grid-cols-2 md:py-24">
-          <div className="text-center md:text-left">
+        <div className="container relative z-10 mx-auto flex min-h-[60vh] flex-col items-center justify-center gap-8 px-4 py-16 text-center md:py-24">
+          <div>
             <h1 className="font-headline text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
               Seamless Sharing,
               <br />
               <span className="text-primary">Instantly.</span>
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground md:text-xl">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
               QuickPaste is your go-to solution for fast and secure text and file sharing across devices. No sign-ups, no hassle.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row md:justify-start">
+            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">
                 <Link href="/transfer">
                   Start Sharing Now <ArrowRight className="ml-2" />
@@ -33,23 +29,11 @@ export default function LandingPage() {
               </Button>
             </div>
           </div>
-          <div className="relative hidden h-64 md:block md:h-full">
-            {heroImage && (
-              <Image
-                src={heroImage.imageUrl}
-                alt={heroImage.description}
-                fill
-                className="rounded-lg object-cover shadow-2xl"
-                data-ai-hint={heroImage.imageHint}
-                priority
-              />
-            )}
-          </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="w-full bg-secondary py-20 sm:py-24">
+      <section id="features" className="w-full bg-background py-20 sm:py-24">
         <div className="container mx-auto px-4">
           <div className="mb-16 text-center">
             <h2 className="font-headline text-4xl font-bold">A Better Way to Share</h2>

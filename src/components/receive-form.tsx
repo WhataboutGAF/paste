@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useState, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
 import { getTextAction, type ReceiveState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,7 @@ function SubmitButton() {
 }
 
 export function ReceiveForm() {
-  const [state, formAction] = useFormState(getTextAction, initialState);
+  const [state, formAction] = useActionState(getTextAction, initialState);
   const [showText, setShowText] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();

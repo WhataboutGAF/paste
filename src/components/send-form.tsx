@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useState, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
 import { generateCodeAction, type SendState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ function SubmitButton() {
 }
 
 export function SendForm() {
-  const [state, formAction] = useFormState(generateCodeAction, initialState);
+  const [state, formAction] = useActionState(generateCodeAction, initialState);
   const [text, setText] = useState('');
   const [showCode, setShowCode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);

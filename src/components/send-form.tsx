@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useState, useRef } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
 import { generateCodeAction, type SendState } from '@/app/actions';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { useHistory } from '@/hooks/use-history';
 import { CopyButton } from './copy-button';
 
 const initialState: SendState = {
@@ -34,12 +35,17 @@ function SubmitButton() {
   );
 }
 
-export function SendForm() {
+interface SendFormProps {
+  text: string;
+  onTextChange: (text: string) => void;
+}
+
+export function SendForm({ text, onTextChange }: SendFormProps) {
   const [state, formAction] = useActionState(generateCodeAction, initialState);
-  const [text, setText] = useState('');
   const [showCode, setShowCode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
+  const { addHistoryItem } = useHistory();
 
   useEffect(() => {
     if (state?.error) {
@@ -52,14 +58,15 @@ export function SendForm() {
     }
     if (state?.code) {
       setShowCode(true);
+      if (text && state.code) {
+        addHistoryItem({ text, code: state.code });
+      }
     }
-  }, [state, toast]);
+  }, [state, toast, addHistoryItem, text]);
 
   const handleReset = () => {
     setShowCode(false);
-    setText('');
     formRef.current?.reset();
-    // A simple way to reset form state for this use case
     if (initialState.code) initialState.code = null;
     if (initialState.error) initialState.error = null;
   };
@@ -71,7 +78,7 @@ export function SendForm() {
           <CardTitle>Code Generated</CardTitle>
           <CardDescription>Enter this code on your other device to retrieve the text.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed p-8 text-center">
             <p className="text-sm text-muted-foreground">Your unique code is:</p>
             <div className="flex items-center space-x-2">
@@ -79,8 +86,10 @@ export function SendForm() {
               <CopyButton textToCopy={state.code} />
             </div>
             <p className="text-xs text-muted-foreground">Expires in 5 minutes. Use once.</p>
+          </div>
+          <div className="flex justify-center">
             <Button variant="link" onClick={handleReset}>
-              Send another text
+              Send the same text again
             </Button>
           </div>
         </CardContent>
@@ -103,7 +112,7 @@ export function SendForm() {
               className="min-h-[200px] resize-y"
               maxLength={10000}
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => onTextChange(e.target.value)}
               required
             />
             <p className="absolute bottom-3 right-3 text-xs text-muted-foreground">{text.length} / 10000</p>

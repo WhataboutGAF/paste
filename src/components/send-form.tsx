@@ -1,21 +1,14 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useFormStatus } from 'react-dom';
 import { ArrowRight, LoaderCircle } from 'lucide-react';
-import { generateCodeAction, type SendState } from '@/app/actions';
+import { type SendState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { useHistory } from '@/hooks/use-history';
 import { CopyButton } from './copy-button';
 import { HistoryButton } from './history-button';
-
-const initialState: SendState = {
-  code: null,
-  error: null,
-};
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -39,37 +32,18 @@ function SubmitButton() {
 interface SendFormProps {
   text: string;
   onTextChange: (text: string) => void;
+  formAction: (payload: FormData) => void;
+  state: SendState;
+  showCode: boolean;
+  onReset: () => void;
 }
 
-export function SendForm({ text, onTextChange }: SendFormProps) {
-  const [state, formAction] = useActionState(generateCodeAction, initialState);
-  const [showCode, setShowCode] = useState(false);
+export function SendForm({ text, onTextChange, formAction, state, showCode, onReset }: SendFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const { toast } = useToast();
-  const { addHistoryItem } = useHistory();
-
-  useEffect(() => {
-    if (state?.error) {
-      toast({
-        title: 'Error',
-        description: state.error,
-        variant: 'destructive',
-      });
-      setShowCode(false);
-    }
-    if (state?.code) {
-      setShowCode(true);
-      if (text && state.code) {
-        addHistoryItem({ text, code: state.code });
-      }
-    }
-  }, [state, toast, addHistoryItem, text]);
 
   const handleReset = () => {
-    setShowCode(false);
+    onReset();
     formRef.current?.reset();
-    if (initialState.code) initialState.code = null;
-    if (initialState.error) initialState.error = null;
   };
 
   if (showCode && state?.code) {
@@ -95,7 +69,7 @@ export function SendForm({ text, onTextChange }: SendFormProps) {
           </div>
           <div className="flex justify-center">
             <Button variant="link" onClick={handleReset}>
-              Send the same text again
+              Send new text
             </Button>
           </div>
         </CardContent>

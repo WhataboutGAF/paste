@@ -47,19 +47,21 @@ export default function LandingPage() {
             <p className="mt-4 text-lg text-muted-foreground">Everything you need for quick device-to-device transfers, and more.</p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <Card className="border-0 bg-transparent text-center shadow-none">
-              <CardHeader className="flex items-center justify-center">
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Type className="h-10 w-10" />
-                </div>
-                <CardTitle>Text Transfer</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Instantly send snippets of text, links, or notes between your devices using a simple, secure code.
-                </p>
-              </CardContent>
-            </Card>
+            <Link href="/transfer" className="block rounded-lg transition-all hover:scale-105 hover:bg-accent/25">
+              <Card className="h-full border-0 bg-transparent text-center shadow-none">
+                <CardHeader className="flex items-center justify-center">
+                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Type className="h-10 w-10" />
+                  </div>
+                  <CardTitle>Text Transfer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Instantly send snippets of text, links, or notes between your devices using a simple, secure code.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
             <Card className="border-0 bg-transparent text-center shadow-none">
               <CardHeader className="flex items-center justify-center">
                 <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">

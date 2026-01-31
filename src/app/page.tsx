@@ -2,10 +2,12 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, File, Camera, Type, ArrowDown } from 'lucide-react';
+import { ScrollToTop } from '@/components/scroll-to-top';
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       {/* Hero Section */}
       <section className="relative w-full bg-background text-foreground">
         <div className="container relative z-10 mx-auto flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-16 text-center md:py-24">

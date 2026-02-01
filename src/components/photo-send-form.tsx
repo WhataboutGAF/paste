@@ -31,7 +31,7 @@ export function PhotoSendForm() {
   const auth = useAuth();
   const storage = useStorage();
   const firestore = useFirestore();
-  const { isUserLoading } = useUser();
+  const { user, isUserLoading } = useUser();
 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     if (fileRejections.length > 0) {
@@ -82,10 +82,10 @@ export function PhotoSendForm() {
   };
 
   const handleGenerateCode = async () => {
-    if (!file || !auth || !storage || !firestore) {
+    if (!file || !auth || !storage || !firestore || !user) {
         toast({
             title: 'Error',
-            description: 'Services not available. Please try again later.',
+            description: 'Services not available or not authenticated. Please try again later.',
             variant: 'destructive',
         });
         return;
@@ -178,13 +178,13 @@ export function PhotoSendForm() {
               </div>
             )}
             <div className="flex items-center justify-center gap-4">
-              <Button onClick={handleGenerateCode} disabled={isUploading || isUserLoading}>
+              <Button onClick={handleGenerateCode} disabled={isUploading || isUserLoading || !user}>
                 {isUploading ? (
                   <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                 ) : null}
-                {isUserLoading ? 'Authenticating...' : isUploading ? 'Uploading...' : 'Generate Code'}
+                {isUserLoading || !user ? 'Authenticating...' : isUploading ? 'Uploading...' : 'Generate Code'}
               </Button>
-              <Button variant="outline" onClick={handleReset} disabled={isUploading || isUserLoading}>
+              <Button variant="outline" onClick={handleReset} disabled={isUploading || isUserLoading || !user}>
                 Cancel
               </Button>
             </div>

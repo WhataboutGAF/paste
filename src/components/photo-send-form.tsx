@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CopyButton } from './copy-button';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth, useStorage, useFirestore } from '@/firebase';
+import { useAuth, useStorage, useFirestore, useUser } from '@/firebase';
 import { ref, uploadBytes } from 'firebase/storage';
 import { addDoc, collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 
@@ -31,6 +31,7 @@ export function PhotoSendForm() {
   const auth = useAuth();
   const storage = useStorage();
   const firestore = useFirestore();
+  const { isUserLoading } = useUser();
 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     if (fileRejections.length > 0) {
@@ -177,11 +178,13 @@ export function PhotoSendForm() {
               </div>
             )}
             <div className="flex items-center justify-center gap-4">
-              <Button onClick={handleGenerateCode} disabled={isUploading}>
-                {isUploading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Generate Code
+              <Button onClick={handleGenerateCode} disabled={isUploading || isUserLoading}>
+                {isUploading ? (
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {isUserLoading ? 'Authenticating...' : isUploading ? 'Uploading...' : 'Generate Code'}
               </Button>
-              <Button variant="outline" onClick={handleReset} disabled={isUploading}>
+              <Button variant="outline" onClick={handleReset} disabled={isUploading || isUserLoading}>
                 Cancel
               </Button>
             </div>

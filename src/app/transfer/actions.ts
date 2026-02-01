@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { storeText, retrieveText, storePhoto, retrievePhoto } from '@/lib/storage';
+import { storeText, retrieveText, retrievePhoto } from '@/lib/storage';
 
 // --- Text Transfer States and Actions ---
 
@@ -73,44 +73,6 @@ export type PhotoSendState = {
   code?: string | null;
   error?: string | null;
 };
-
-const photoSchema = z.object({
-  photo: z
-    .instanceof(File, { message: 'Photo is required.' })
-    .refine((file) => file.size > 0, 'Photo cannot be empty.')
-    .refine((file) => file.size <= 10 * 1024 * 1024, `File size must be less than 10MB.`)
-    .refine(
-      (file) => ['image/png', 'image/jpeg', 'image/webp'].includes(file.type),
-      'Invalid file type. Only PNG, JPEG, and WebP are allowed.'
-    ),
-});
-
-export async function generatePhotoCodeAction(
-  prevState: PhotoSendState,
-  formData: FormData,
-): Promise<PhotoSendState> {
-  const validatedFields = photoSchema.safeParse({
-    photo: formData.get('photo'),
-  });
-
-  if (!validatedFields.success) {
-    const errors = validatedFields.error.flatten().fieldErrors;
-    return {
-      error: errors.photo?.[0] || 'Invalid photo provided.',
-    };
-  }
-  
-  try {
-    const code = await storePhoto(validatedFields.data.photo);
-    return { code };
-  } catch (error) {
-    if (error instanceof Error) {
-      return { error: error.message };
-    }
-    return { error: 'An unexpected error occurred during photo upload.' };
-  }
-}
-
 
 export async function getImageAction(prevState: ReceiveState, formData: FormData): Promise<ReceiveState> {
     const validatedFields = receiveSchema.safeParse({

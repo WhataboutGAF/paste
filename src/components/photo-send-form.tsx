@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CopyButton } from './copy-button';
 import { useToast } from '@/hooks/use-toast';
-import { generatePhotoCodeAction, type PhotoSendState } from '@/app/transfer/actions';
+import { useAuth, useStorage, useFirestore } from '@/firebase';
+import { ref, uploadBytes } from 'firebase/storage';
+import { addDoc, collection, serverTimestamp, Timestamp } from 'firebase/firestore';
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_MIME_TYPES = {
@@ -15,6 +17,10 @@ const ACCEPTED_MIME_TYPES = {
   'image/jpeg': ['.jpeg', '.jpg'],
   'image/webp': ['.webp'],
 };
+const CODE_LENGTH = 5;
+const CODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const PHOTO_STORE_COLLECTION = 'imageTransfers';
+const TTL = 5 * 60 * 1000; // 5 minutes
 
 export function PhotoSendForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -22,6 +28,9 @@ export function PhotoSendForm() {
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
   const { toast } = useToast();
+  const auth = useAuth();
+  const storage = useStorage();
+  const firestore = useFirestore();
 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     if (fileRejections.length > 0) {
@@ -61,29 +70,52 @@ export function PhotoSendForm() {
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
 
+  const generateCode = () => {
+    let code = '';
+    for (let i = 0; i < CODE_LENGTH; i++) {
+      code += CODE_CHARS.charAt(Math.floor(Math.random() * CODE_CHARS.length));
+    }
+    // Note: This client-side generation has a small chance of collision.
+    // For a high-traffic app, a server-side unique code generation would be better.
+    return code;
+  };
+
   const handleGenerateCode = async () => {
-    if (!file) return;
+    if (!file || !auth || !storage || !firestore) {
+        toast({
+            title: 'Error',
+            description: 'Services not available. Please try again later.',
+            variant: 'destructive',
+        });
+        return;
+    }
 
     setIsUploading(true);
 
-    const formData = new FormData();
-    formData.append('photo', file);
+    const code = generateCode();
+    const filePath = `photos/${code}/${file.name}`;
+    const storageRef = ref(storage, filePath);
 
     try {
-      const result: PhotoSendState = await generatePhotoCodeAction({}, formData);
-      
-      if (result.error) {
-        throw new Error(result.error);
-      }
+      // 1. Upload file to Storage
+      await uploadBytes(storageRef, file, { contentType: file.type });
 
-      if (result.code) {
-        setGeneratedCode(result.code);
-        setShowCode(true);
-      }
+      // 2. Create Firestore record
+      const expiresAt = Timestamp.fromMillis(Date.now() + TTL);
+      await addDoc(collection(firestore, PHOTO_STORE_COLLECTION), {
+        code,
+        filePath,
+        createdAt: serverTimestamp(),
+        expiresAt,
+      });
+
+      setGeneratedCode(code);
+      setShowCode(true);
     } catch (error: any) {
+      console.error("Upload failed:", error);
       toast({
         title: 'Upload Failed',
-        description: error.message || 'An unexpected error occurred.',
+        description: error.message || 'Missing or insufficient permissions.',
         variant: 'destructive',
       });
     } finally {

@@ -1,0 +1,33 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAnonymous() {
+      return request.auth != null && request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+
+    function isImage(file) {
+      return file.contentType.matches('image/(png|jpeg|webp)');
+    }
+    
+    function isWithinSizeLimit(file) {
+      return file.size < 10 * 1024 * 1024; // 10MB
+    }
+    
+    /**
+     * @description
+     * Governs access to photo uploads. Allows any anonymously signed-in user
+     * to upload an image file under 10MB. Reading, updating, and deleting
+     * files is prohibited on the client-side to protect user privacy.
+     * @path /photos/{code}/{fileName}
+     * @allow (create) An anonymous user can upload an image if it meets type and size constraints.
+     * @deny (read, update, delete) Direct client access for reading or modification is forbidden.
+     */
+    match /photos/{code}/{fileName} {
+      allow create: if isAnonymous() && isImage(request.resource) && isWithinSizeLimit(request.resource);
+      allow read, update, delete: if false;
+    }
+  }
+}

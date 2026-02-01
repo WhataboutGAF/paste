@@ -36,7 +36,7 @@ function SubmitButton() {
   );
 }
 
-export function ReceiveForm() {
+export function TextReceiveForm() {
   const [state, formAction] = useActionState(getTextAction, initialState);
   const [showText, setShowText] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);

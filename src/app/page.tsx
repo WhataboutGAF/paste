@@ -22,7 +22,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="#features">Start Sharing Now</Link>
+                <Link href="/transfer">Start Sharing Now</Link>
               </Button>
             </div>
           </div>
@@ -41,7 +41,7 @@ export default function LandingPage() {
             <h2 className="font-headline text-4xl font-bold">A Better Way to Share</h2>
             <p className="mt-4 text-lg text-muted-foreground">Everything you need for quick device-to-device transfers, and more.</p>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <Link href="/transfer" className="block rounded-lg transition-all hover:scale-105 hover:bg-accent/25">
               <Card className="h-full border-0 bg-transparent text-center shadow-none">
                 <CardHeader className="flex items-center justify-center">
@@ -57,32 +57,21 @@ export default function LandingPage() {
                 </CardContent>
               </Card>
             </Link>
-            <Card className="border-0 bg-transparent text-center shadow-none">
-              <CardHeader className="flex items-center justify-center">
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Camera className="h-10 w-10" />
-                </div>
-                <CardTitle>Photo Sharing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  <span className="font-semibold text-primary">Coming Soon!</span> Seamlessly transfer photos from your phone to your computer or vice-versa.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 bg-transparent text-center shadow-none">
-              <CardHeader className="flex items-center justify-center">
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <File className="h-10 w-10" />
-                </div>
-                <CardTitle>File Sharing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  <span className="font-semibold text-primary">Coming Soon!</span> Quickly share documents and other files without needing to email them to yourself.
-                </p>
-              </CardContent>
-            </Card>
+            <Link href="/transfer" className="block rounded-lg transition-all hover:scale-105 hover:bg-accent/25">
+              <Card className="h-full border-0 bg-transparent text-center shadow-none">
+                <CardHeader className="flex items-center justify-center">
+                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Camera className="h-10 w-10" />
+                  </div>
+                  <CardTitle>Photo Sharing</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Seamlessly transfer photos from your phone to your computer or vice-versa.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>

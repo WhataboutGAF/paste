@@ -1,4 +1,5 @@
 
+import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
   getStorage,
   ref,
@@ -17,11 +18,19 @@ import {
   serverTimestamp,
   Timestamp,
 } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase';
+import { firebaseConfig } from '@/firebase/config';
 
 const TEXT_STORE_COLLECTION = 'textTransfers';
 const PHOTO_STORE_COLLECTION = 'imageTransfers';
 const TTL = 5 * 60 * 1000; // 5 minutes
+
+// Server-side initialization to be used ONLY within this file.
+function getFirebaseServices() {
+    const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    const firestore = getFirestore(app);
+    const storage = getStorage(app);
+    return { app, firestore, storage };
+}
 
 // --- Code Generation ---
 const CODE_LENGTH_TEXT = 4;
@@ -29,8 +38,7 @@ const CODE_LENGTH_PHOTO = 5;
 const CODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 async function generateUniqueCode(length: number, collectionName: string): Promise<string> {
-  const { firestore } = initializeFirebase();
-  const db = firestore;
+  const { firestore } = getFirebaseServices();
   let code: string;
   let attempts = 0;
   do {
@@ -38,7 +46,7 @@ async function generateUniqueCode(length: number, collectionName: string): Promi
     for (let i = 0; i < length; i++) {
       code += CODE_CHARS.charAt(Math.floor(Math.random() * CODE_CHARS.length));
     }
-    const q = query(collection(db, collectionName), where('code', '==', code));
+    const q = query(collection(firestore, collectionName), where('code', '==', code));
     const snapshot = await getDocs(q);
     if (snapshot.empty) {
       return code;
@@ -51,7 +59,7 @@ async function generateUniqueCode(length: number, collectionName: string): Promi
 // --- Text Transfer ---
 
 export async function storeText(text: string): Promise<string> {
-  const { firestore } = initializeFirebase();
+  const { firestore } = getFirebaseServices();
   const code = await generateUniqueCode(CODE_LENGTH_TEXT, TEXT_STORE_COLLECTION);
   const expiresAt = Timestamp.fromMillis(Date.now() + TTL);
 
@@ -66,7 +74,7 @@ export async function storeText(text: string): Promise<string> {
 }
 
 export async function retrieveText(code: string): Promise<string | null> {
-  const { firestore } = initializeFirebase();
+  const { firestore } = getFirebaseServices();
   const q = query(
     collection(firestore, TEXT_STORE_COLLECTION),
     where('code', '==', code.toUpperCase()),
@@ -92,7 +100,7 @@ export async function retrieveText(code: string): Promise<string | null> {
 // --- Photo Transfer ---
 
 export async function storePhoto(file: File): Promise<string> {
-  const { firestore, storage } = initializeFirebase();
+  const { firestore, storage } = getFirebaseServices();
   const code = await generateUniqueCode(CODE_LENGTH_PHOTO, PHOTO_STORE_COLLECTION);
   const filePath = `photos/${code}/${file.name}`;
   const storageRef = ref(storage, filePath);
@@ -124,7 +132,7 @@ export async function storePhoto(file: File): Promise<string> {
 
 
 export async function retrievePhoto(code: string): Promise<string | null> {
-  const { firestore, storage } = initializeFirebase();
+  const { firestore, storage } = getFirebaseServices();
 
   // 1. Find the document in Firestore
   const q = query(

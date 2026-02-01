@@ -98,7 +98,7 @@ export function PhotoReceiveForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative aspect-video w-full overflow-hidden rounded-md">
-            <Image src={imageUrl} alt="Received photo" layout="fill" objectFit="contain" />
+            <Image src={imageUrl} alt="Received photo" fill={true} objectFit="contain" />
           </div>
           <Button variant="link" onClick={handleReset}>
             Receive another photo

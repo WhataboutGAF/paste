@@ -22,7 +22,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/transfer">Start Sharing Now</Link>
+                <Link href="#features">Start Sharing Now</Link>
               </Button>
             </div>
           </div>

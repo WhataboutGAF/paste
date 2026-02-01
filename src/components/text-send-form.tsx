@@ -42,7 +42,6 @@ export function TextSendForm() {
   const [sendText, setSendText] = useState('');
   const [state, formAction] = useActionState(generateCodeAction, initialSendState);
   const [showCode, setShowCode] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const { addHistoryItem } = useHistory();
   const { toast } = useToast();
 
@@ -54,23 +53,27 @@ export function TextSendForm() {
         variant: 'destructive',
       });
       setShowCode(false);
-      setGeneratedCode(null);
     }
     if (state?.code && state.text) {
-      setGeneratedCode(state.code);
       setShowCode(true);
-      addHistoryItem({ text: state.text, code: state.code });
+      // Only add to history if it's a new submission
+      if (state.text === sendText) {
+        addHistoryItem({ text: state.text, code: state.code });
+      }
     }
-  }, [state, toast, addHistoryItem]);
+  }, [state, toast, addHistoryItem, sendText]);
 
   const handleReset = () => {
     setShowCode(false);
-    setGeneratedCode(null);
     setSendText('');
     formRef.current?.reset();
+    // Clear the action state to prevent re-showing the old code
+    if (initialSendState.text) initialSendState.text = null;
+    if (initialSendState.code) initialSendState.code = null;
+    if (initialSendState.error) initialSendState.error = null;
   };
   
-  if (showCode && generatedCode) {
+  if (showCode && state?.code && state?.text) {
     return (
       <Card className="border-none bg-transparent shadow-none">
         <CardHeader>
@@ -86,8 +89,8 @@ export function TextSendForm() {
           <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-dashed p-8 text-center">
             <p className="text-sm text-muted-foreground">Your unique code is:</p>
             <div className="flex items-center space-x-2">
-              <p className="font-code text-4xl font-semibold tracking-widest text-primary">{generatedCode}</p>
-              <CopyButton textToCopy={generatedCode} />
+              <p className="font-code text-4xl font-semibold tracking-widest text-primary">{state.code}</p>
+              <CopyButton textToCopy={state.code} />
             </div>
             <p className="text-xs text-muted-foreground">Expires in 5 minutes. Use once.</p>
           </div>

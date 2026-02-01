@@ -3,7 +3,7 @@
 import {
   getStorage,
   ref,
-  uploadBytesResumable,
+  uploadBytes,
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage';
@@ -17,7 +17,6 @@ import {
   deleteDoc,
   serverTimestamp,
   Timestamp,
-  doc,
 } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 
@@ -95,53 +94,34 @@ export async function retrieveText(code: string): Promise<string | null> {
 
 // --- Photo Transfer ---
 
-export async function storePhoto(
-  file: File
-): Promise<string> {
-  const storage = getStorage();
-  const db = firestore;
-
-  // 1. Generate unique code
+export async function storePhoto(file: File): Promise<string> {
   const code = await generateUniqueCode(CODE_LENGTH_PHOTO, PHOTO_STORE_COLLECTION);
   const filePath = `photos/${code}/${file.name}`;
   const storageRef = ref(storage, filePath);
 
-  // 2. Start the resumable upload
-  const uploadTask = uploadBytesResumable(storageRef, file, {
-    contentType: file.type,
-  });
+  try {
+    // 1. Upload file
+    await uploadBytes(storageRef, file, { contentType: file.type });
 
-  // 3. Return a promise that resolves with the code when done
-  return new Promise((resolve, reject) => {
-    uploadTask.on(
-      'state_changed',
-      null, // No progress reporting
-      (error) => {
-        // Handle unsuccessful uploads
-        console.error('Upload failed:', error);
-        reject(new Error(`Upload failed: ${error.message}`));
-      },
-      async () => {
-        // Handle successful uploads on complete
-        try {
-          // 4. Create Firestore record
-          const expiresAt = Timestamp.fromMillis(Date.now() + TTL);
-          await addDoc(collection(db, PHOTO_STORE_COLLECTION), {
-            code,
-            filePath,
-            createdAt: serverTimestamp(),
-            expiresAt,
-          });
-          resolve(code);
-        } catch (dbError) {
-          console.error('Firestore write failed:', dbError);
-          // Attempt to clean up the uploaded file if DB write fails
-          await deleteObject(storageRef).catch(delErr => console.error('Cleanup failed:', delErr));
-          reject(new Error('Failed to save transfer record.'));
-        }
-      }
-    );
-  });
+    // 2. Create Firestore record
+    const expiresAt = Timestamp.fromMillis(Date.now() + TTL);
+    await addDoc(collection(firestore, PHOTO_STORE_COLLECTION), {
+      code,
+      filePath,
+      createdAt: serverTimestamp(),
+      expiresAt,
+    });
+
+    return code;
+  } catch (error) {
+    console.error('Photo storage failed:', error);
+    // Attempt to clean up failed upload
+    await deleteObject(storageRef).catch(() => {});
+    if (error instanceof Error) {
+      throw new Error(`Upload failed: ${error.message}`);
+    }
+    throw new Error('An unexpected error occurred during photo upload.');
+  }
 }
 
 

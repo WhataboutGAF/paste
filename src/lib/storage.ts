@@ -20,9 +20,6 @@ import {
 } from 'firebase/firestore';
 import { initializeFirebase } from '@/firebase';
 
-// --- Initialization ---
-const { firestore, storage } = initializeFirebase();
-
 const TEXT_STORE_COLLECTION = 'textTransfers';
 const PHOTO_STORE_COLLECTION = 'imageTransfers';
 const TTL = 5 * 60 * 1000; // 5 minutes
@@ -33,6 +30,7 @@ const CODE_LENGTH_PHOTO = 5;
 const CODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 async function generateUniqueCode(length: number, collectionName: string): Promise<string> {
+  const { firestore } = initializeFirebase();
   const db = firestore;
   let code: string;
   let attempts = 0;
@@ -54,11 +52,11 @@ async function generateUniqueCode(length: number, collectionName: string): Promi
 // --- Text Transfer ---
 
 export async function storeText(text: string): Promise<string> {
-  const db = firestore;
+  const { firestore } = initializeFirebase();
   const code = await generateUniqueCode(CODE_LENGTH_TEXT, TEXT_STORE_COLLECTION);
   const expiresAt = Timestamp.fromMillis(Date.now() + TTL);
 
-  await addDoc(collection(db, TEXT_STORE_COLLECTION), {
+  await addDoc(collection(firestore, TEXT_STORE_COLLECTION), {
     code,
     text,
     createdAt: serverTimestamp(),
@@ -69,9 +67,9 @@ export async function storeText(text: string): Promise<string> {
 }
 
 export async function retrieveText(code: string): Promise<string | null> {
-  const db = firestore;
+  const { firestore } = initializeFirebase();
   const q = query(
-    collection(db, TEXT_STORE_COLLECTION),
+    collection(firestore, TEXT_STORE_COLLECTION),
     where('code', '==', code.toUpperCase()),
     where('expiresAt', '>', Timestamp.now())
   );
@@ -95,6 +93,7 @@ export async function retrieveText(code: string): Promise<string | null> {
 // --- Photo Transfer ---
 
 export async function storePhoto(file: File): Promise<string> {
+  const { firestore, storage } = initializeFirebase();
   const code = await generateUniqueCode(CODE_LENGTH_PHOTO, PHOTO_STORE_COLLECTION);
   const filePath = `photos/${code}/${file.name}`;
   const storageRef = ref(storage, filePath);
@@ -126,12 +125,11 @@ export async function storePhoto(file: File): Promise<string> {
 
 
 export async function retrievePhoto(code: string): Promise<string | null> {
-  const db = firestore;
-  const storage = getStorage();
+  const { firestore, storage } = initializeFirebase();
 
   // 1. Find the document in Firestore
   const q = query(
-    collection(db, PHOTO_STORE_COLLECTION),
+    collection(firestore, PHOTO_STORE_COLLECTION),
     where('code', '==', code.toUpperCase()),
     where('expiresAt', '>', Timestamp.now())
   );

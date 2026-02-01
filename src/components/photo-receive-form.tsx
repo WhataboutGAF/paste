@@ -102,7 +102,7 @@ export function PhotoReceiveForm() {
           </div>
           <Button variant="link" onClick={handleReset}>
             Receive another photo
-          Button>
+          </Button>
         </CardContent>
       </Card>
     );

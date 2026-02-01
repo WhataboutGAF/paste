@@ -88,7 +88,6 @@ const photoSchema = z.object({
 export async function generatePhotoCodeAction(
   prevState: PhotoSendState,
   formData: FormData,
-  onProgress: (progress: number) => void
 ): Promise<PhotoSendState> {
   const validatedFields = photoSchema.safeParse({
     photo: formData.get('photo'),
@@ -102,7 +101,7 @@ export async function generatePhotoCodeAction(
   }
   
   try {
-    const code = await storePhoto(validatedFields.data.photo, onProgress);
+    const code = await storePhoto(validatedFields.data.photo);
     return { code };
   } catch (error) {
     if (error instanceof Error) {

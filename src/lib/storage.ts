@@ -96,8 +96,7 @@ export async function retrieveText(code: string): Promise<string | null> {
 // --- Photo Transfer ---
 
 export async function storePhoto(
-  file: File,
-  onProgress: (progress: number) => void
+  file: File
 ): Promise<string> {
   const storage = getStorage();
   const db = firestore;
@@ -116,10 +115,7 @@ export async function storePhoto(
   return new Promise((resolve, reject) => {
     uploadTask.on(
       'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        onProgress(progress);
-      },
+      null, // No progress reporting
       (error) => {
         // Handle unsuccessful uploads
         console.error('Upload failed:', error);

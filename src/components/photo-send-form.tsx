@@ -5,7 +5,6 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { CopyButton } from './copy-button';
 import { useToast } from '@/hooks/use-toast';
 import { generatePhotoCodeAction, type PhotoSendState } from '@/app/transfer/actions';
@@ -19,7 +18,6 @@ const ACCEPTED_MIME_TYPES = {
 
 export function PhotoSendForm() {
   const [file, setFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [showCode, setShowCode] = useState(false);
@@ -67,15 +65,12 @@ export function PhotoSendForm() {
     if (!file) return;
 
     setIsUploading(true);
-    setUploadProgress(0);
 
     const formData = new FormData();
     formData.append('photo', file);
 
     try {
-      const result: PhotoSendState = await generatePhotoCodeAction(new FormData(), formData, (progress) => {
-        setUploadProgress(progress);
-      });
+      const result: PhotoSendState = await generatePhotoCodeAction({}, formData);
       
       if (result.error) {
         throw new Error(result.error);
@@ -98,7 +93,6 @@ export function PhotoSendForm() {
   
   const handleReset = () => {
     setFile(null);
-    setUploadProgress(0);
     setIsUploading(false);
     setGeneratedCode(null);
     setShowCode(false);
@@ -147,8 +141,7 @@ export function PhotoSendForm() {
             </div>
             {isUploading && (
               <div className="space-y-2">
-                <Progress value={uploadProgress} />
-                <p className="text-center text-sm text-muted-foreground">Uploading... {Math.round(uploadProgress)}%</p>
+                <p className="text-center text-sm text-muted-foreground">Uploading...</p>
               </div>
             )}
             <div className="flex items-center justify-center gap-4">

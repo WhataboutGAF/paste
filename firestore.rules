@@ -1,0 +1,76 @@
+/**
+ * Core Philosophy: This ruleset secures a "zero friction" temporary file sharing
+ * service. The core principle is that access is public but ephemeral. Users do
+ * not need to log in; they are authenticated anonymously. This allows anyone to
+ * upload (create) a transfer record, and anyone with the link (document ID) to
+ * read it. To prevent abuse and protect privacy, records cannot be listed,
+ * modified, or deleted by clients.
+ *
+ * Data Structure: The data is organized in a single, flat top-level collection
+ * named `/imageTransfers`. Each document in this collection represents one
+ * temporary file transfer.
+ *
+ * Key Security Decisions:
+ * - Anonymous Creation: Any user with an anonymous Firebase auth session can
+ *   create a new transfer record. This fulfills the "zero login" requirement.
+ * - Public Read (Get only): Anyone can fetch a specific transfer document if
+ *   they know its unique ID. This allows the receiving device to get the data.
+ * - No Listing: Listing the entire `/imageTransfers` collection is explicitly
+ *   denied. This is a critical security measure to prevent malicious actors
+ *   from discovering and scraping all active file transfers.
+ * - Immutable Records: Client-side updates and deletes are strictly forbidden.
+ *   This ensures that once a record is created, it cannot be tampered with.
+ *   Cleanup is delegated to a trusted server-side process (e.g., a scheduled
+ *   Firebase Function) which bypasses these rules.
+ *
+ * Denormalization for Authorization: Not applicable. Since the access model is
+ * public and anonymous, there is no user-specific data to denormalize for
+ * authorization checks. Security relies on the obscurity of document IDs and
+ * the short expiration time of the data.
+ *
+ * Structural Segregation: Not applicable. There is only one type of data with a
+ * single, uniform access control policy.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for readability and re-use.
+
+    /**
+     * Checks if the user is authenticated, including anonymous users.
+     * This is the minimum requirement for creating new data.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description
+     * Governs access to temporary image transfer records. Allows any
+     * anonymously authenticated user to create a record and any user
+     * (authenticated or not) to retrieve a single record. Listing, updating,
+     * and deleting records is prohibited to protect user privacy and data
+     * integrity.
+     * @path /imageTransfers/{imageTransferId}
+     * @allow (create) An anonymous user can create a new image transfer record.
+     * @allow (get) Any user, even unauthenticated, can fetch a record by its ID.
+     * @deny (list) A user cannot list all documents to prevent scraping active transfers.
+     * @deny (update) A user cannot modify an existing transfer record after creation.
+     * @principle
+     * Implements a "public create/read-once" model secured by time-limitation
+     * and obscurity, with client-side modifications disabled. Cleanup is handled
+     * by a trusted server process.
+     */
+    match /imageTransfers/{imageTransferId} {
+      // READ operations
+      allow get: if true;
+      allow list: if false;
+
+      // WRITE operations
+      allow create: if isSignedIn();
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}

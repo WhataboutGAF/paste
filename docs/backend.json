@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "ImageTransfer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ImageTransfer",
+      "type": "object",
+      "description": "Represents a temporary image transfer record.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Unique code for accessing the image."
+        },
+        "filePath": {
+          "type": "string",
+          "description": "Path to the image file in Firebase Storage."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the record was created.",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the record expires.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "code",
+        "filePath",
+        "createdAt",
+        "expiresAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/imageTransfers/{imageTransferId}",
+        "definition": {
+          "entityName": "ImageTransfer",
+          "schema": {
+            "$ref": "#/backend/entities/ImageTransfer"
+          },
+          "description": "Stores temporary image transfer records. The 'code' field is used for lookup, and 'filePath' points to the image in Firebase Storage.  'createdAt' and 'expiresAt' define the validity window. The imageTransferId is a random ID.",
+          "params": [
+            {
+              "name": "imageTransferId",
+              "description": "Unique ID for the image transfer record (auto-generated)."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed for temporary storage of image transfer records, prioritizing speed, security, and automatic cleanup. It leverages a flat collection structure to minimize read operations and maintain simplicity.\n\n**Authorization Independence:** Since the application requires no authentication, all access is inherently public but time-limited. Therefore, no denormalization is needed, as authorization relies solely on the temporary nature of the data and server-side validation. While there's no explicit user-based authorization, the short, random codes prevent unauthorized access attempts, achieving a form of implicit authorization.\n\n**QAPs Support:**\n*   **List Operations:** List operations are not a primary use case in this application. However, if listing were required (e.g., for debugging purposes), the collection structure supports it securely because each document's security posture is identical (time-limited public access).\n*   **Data Integrity:** The combination of `createdAt` and `expiresAt` timestamps enables efficient filtering of expired records for the cleanup process. The server-side validation of mime types ensures that only valid image files are stored, which increases security.\n\n**Automatic Cleanup:** The design relies on a scheduled function that regularly deletes expired records and their corresponding storage files. The `expiresAt` field is crucial for the scheduled function to efficiently identify and delete expired records.\n\nOverall, this design minimizes complexity, reduces read costs, and enhances security by limiting the window of opportunity for unauthorized access."
+  }
+}
